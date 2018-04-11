@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  airdrop-service:
+    build: .
+    container_name: "airdrop-service"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - MONITORED_ERC721=ethereum:0x06012c8cf97bead5deae237070f9587f8e7a266d
+      - PRIVATE_KEY=fill_private_key
+      - AIRDROP_CLAIM_ID="claim:fill_claim_id:0"
+      - INFURA_TOKEN=fill_infura_token
+      - SKIP_ADDRESSES=false
+      - PROCESS_ADDRESSES=false
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
