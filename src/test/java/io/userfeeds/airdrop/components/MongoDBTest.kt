@@ -7,14 +7,20 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
-@SpringBootTest
+@ContextConfiguration(classes = [MongoDBTest.ApplicationConfig::class])
 @RunWith(SpringJUnit4ClassRunner::class)
 class MongoDBTest {
+
+    @Configuration
+    @EnableAutoConfiguration
+    @EnableMongoRepositories(basePackageClasses = [MongoOwnerRepository::class])
+    class ApplicationConfig
 
     @Autowired
     lateinit var mongoOwnerRepository: MongoOwnerRepository
@@ -22,8 +28,7 @@ class MongoDBTest {
     @Autowired
     lateinit var mongoTimeRepository: MongoTimeRepository
 
-    @Autowired
-    lateinit var mongo: MongoDB
+    val mongo by lazy { MongoDB(mongoOwnerRepository, mongoTimeRepository) }
 
     @Test
     fun shouldSaveOwnerToMongoDatabase() {
