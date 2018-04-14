@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine as builder
+FROM openjdk:8 as builder
 ENV a=1
 RUN mkdir /workspace
 WORKDIR /workspace
@@ -12,7 +12,7 @@ RUN ./gradlew check
 ADD src /workspace/src
 RUN ./gradlew build
 
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8
 
 COPY --from=builder /workspace/build/libs/app.jar .
 
