@@ -4,14 +4,14 @@ import io.userfeeds.airdrop.newOwner
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
-@Ignore
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner::class)
 class MongoDBTest {
