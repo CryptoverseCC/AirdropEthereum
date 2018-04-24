@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class AddressCollectingService(private val mongo: AddressCollecting.AddressStore,
-                               private val neo: AddressCollecting.NewAddressProvider,
+                               private val addressProvider: AddressCollecting.NewAddressProvider,
                                @Value("\${SKIP_ADDRESSES}") private val skipAddresses: Boolean) {
 
     fun updateOwnerList() {
         val lastUpdate = mongo.getTime() ?: 0
-        val newOwners = neo.getOwners(lastUpdate)
+        val newOwners = addressProvider.getOwners(lastUpdate)
         if (newOwners.isNotEmpty()) {
             mongo.saveOwners(newOwners, skipAddresses)
             mongo.saveTime(newOwners.map { it.timestamp }.max() ?: 0)
