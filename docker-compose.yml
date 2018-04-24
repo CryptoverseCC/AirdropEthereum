@@ -13,6 +13,7 @@ services:
       - INFURA_TOKEN=fill_infura_token
       - SKIP_ADDRESSES=false
       - PROCESS_ADDRESSES=false
+      - AMOUNT_SEND_TO_EACH_ADDRESS_IN_WEI=10000000000000000
     links:
       - mongodb
     depends_on:
