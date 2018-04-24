@@ -78,6 +78,23 @@ class MongoDBTest {
         assertThat(notProcessedAddresses).isEmpty()
     }
 
+    @Test
+    fun shouldSaveProcessedInfo() {
+        val address = "0x0"
+        mongo.saveOwners(listOf(newOwner(address = address)), true)
+        val notProcessedAddresses = mongo.getNotProcessedOwnersAddresses()
+        assertThat(notProcessedAddresses).isEmpty()
+    }
+
+    @Test
+    fun shouldOverwriteProcessedInfo() {
+        val address = "0x0"
+        mongo.saveOwners(listOf(newOwner(address = address)), false)
+        mongo.saveOwners(listOf(newOwner(address = address)), true)
+        val notProcessedAddresses = mongo.getNotProcessedOwnersAddresses()
+        assertThat(notProcessedAddresses).isEmpty()
+    }
+
     @After
     fun tearDown() {
         mongoOwnerRepository.deleteAll()

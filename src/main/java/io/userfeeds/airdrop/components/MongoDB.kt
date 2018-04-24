@@ -1,7 +1,7 @@
 package io.userfeeds.airdrop.components
 
-import io.userfeeds.airdrop.processing.AddressProcessing
 import io.userfeeds.airdrop.collecting.AddressCollecting
+import io.userfeeds.airdrop.processing.AddressProcessing
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Component
@@ -22,11 +22,18 @@ class MongoDB(
     }
 
     override fun saveOwners(owners: List<AddressCollecting.Owner>, processed: Boolean) {
-        val oldAddresses = mongoOwnerRepository.findAllById(owners.map { it.address }).map { it.address }
-        owners
-                .filterNot { it.address in oldAddresses }
-                .map { MongoOwner(address = it.address, processed = processed) }
-                .let { mongoOwnerRepository.saveAll(it) }
+        val oldOwners = mongoOwnerRepository.findAllById(owners.map { it.address }).toSet()
+        val mongoOwners = owners.map { MongoOwner(address = it.address, processed = processed) }
+        if (processed) {
+            mongoOwners
+                    .filterNot { it in oldOwners }
+                    .let { mongoOwnerRepository.saveAll(it) }
+        } else {
+            val oldAddresses = oldOwners.map { it.address }
+            mongoOwners
+                    .filterNot { it.address in oldAddresses }
+                    .let { mongoOwnerRepository.saveAll(it) }
+        }
     }
 
     override fun getNotProcessedOwnersAddresses(): List<String> {
