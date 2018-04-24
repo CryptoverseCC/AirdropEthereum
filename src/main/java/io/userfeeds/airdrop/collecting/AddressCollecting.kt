@@ -3,7 +3,7 @@ package io.userfeeds.airdrop.collecting
 interface AddressCollecting {
 
     interface NewAddressProvider {
-        fun getOwners(since: Long): List<Owner>
+        fun getOwners(since: Long?): List<Owner>
     }
 
     interface AddressStore {

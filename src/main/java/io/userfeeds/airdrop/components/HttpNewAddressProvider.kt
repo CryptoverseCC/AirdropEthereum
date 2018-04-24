@@ -14,7 +14,7 @@ import retrofit2.http.POST
 
 @Component
 class HttpNewAddressProvider(
-        @Value("\${MONITORED_ERC721}") private val asset:String
+        @Value("\${MONITORED_ERC721}") private val asset: String
 ) : AddressCollecting.NewAddressProvider {
 
     private val baseUrl = "https://api-staging.userfeeds.io/ranking/"
@@ -30,14 +30,31 @@ class HttpNewAddressProvider(
             .create(NewAddressProviderApi::class.java)
 
 
-    override fun getOwners(since: Long): List<AddressCollecting.Owner> {
+    override fun getOwners(since: Long?): List<AddressCollecting.Owner> {
+        return if (since != null) {
+            ownersSince(since)
+        } else {
+            allOwners()
+        }.blockingGet().items
+    }
+
+    private fun ownersSince(since: Long): Single<NewAddressProviderApi.Response> {
         return api.receivers(
                 NewAddressProviderApi.Request(flow = listOf(
                         NewAddressProviderApi.Algorithm(algorithm = "experimental_receivers", params = mapOf(
                                 "timestamp" to since,
                                 "asset" to asset
                         ))
-                ))).blockingGet().items
+                )))
+    }
+
+    private fun allOwners(): Single<NewAddressProviderApi.Response> {
+        return api.receivers(
+                NewAddressProviderApi.Request(flow = listOf(
+                        NewAddressProviderApi.Algorithm(algorithm = "experimental_all_receivers", params = mapOf(
+                                "asset" to asset
+                        ))
+                )))
     }
 }
 
