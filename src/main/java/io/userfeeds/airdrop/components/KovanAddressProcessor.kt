@@ -22,7 +22,7 @@ class KovanAddressProcessor(
     private val logger = logger()
 
     private val weiSendToEachAddress = BigInteger(amountSendToEachAddressInWei)
-    private val contractAddress = "0x5301F5b1Af6f00A61E3a78A9609d1D143B22BB8d"
+    private val contractAddress = "0x5301f5b1af6f00a61e3a78a9609d1d143b22bb8d"
     private val web3j = Web3j.build(HttpService("https://kovan.infura.io/$infuraToken"))
     private val contract = AirdropContract.load(
             contractAddress,
