@@ -2,22 +2,12 @@ package io.userfeeds.airdrop.components
 
 import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 @Ignore
-@SpringBootTest
-@RunWith(SpringJUnit4ClassRunner::class)
 class HttpNewAddressProviderTest {
 
-    @MockBean
-    lateinit var kovanAddressProcessor: KovanAddressProcessor
-
-    @Autowired
-    lateinit var httpNewAddressProvider: HttpNewAddressProvider
+    private val asset = "ethereum:0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    private val httpNewAddressProvider: HttpNewAddressProvider = HttpNewAddressProvider(asset)
 
     @Test
     fun shouldFetchAddressesFromApi() {
