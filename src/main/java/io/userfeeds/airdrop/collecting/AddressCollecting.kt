@@ -1,5 +1,7 @@
 package io.userfeeds.airdrop.collecting
 
+import io.userfeeds.airdrop.dto.Owner
+
 interface AddressCollecting {
 
     interface NewAddressProvider {
@@ -11,8 +13,5 @@ interface AddressCollecting {
         fun saveOwners(owners: List<Owner>, processes: Boolean)
         fun saveTime(timestamp: Long)
     }
-
-    data class Owner(val address: String,
-                     val timestamp: Long)
 
 }

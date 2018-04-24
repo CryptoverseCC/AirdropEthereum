@@ -2,7 +2,9 @@ package io.userfeeds.airdrop
 
 import io.userfeeds.airdrop.collecting.AddressCollectingService
 import io.userfeeds.airdrop.processing.AddressProcessingService
+import io.userfeeds.airdrop.update.AlreadyProcessedService
 import io.userfeeds.cache.util.logger
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -16,6 +18,16 @@ class AirDropApplication
 
 fun main(args: Array<String>) {
     runApplication<AirDropApplication>(*args)
+}
+
+@Component
+class CLR(
+        private val alreadyProcessedService: AlreadyProcessedService
+) : CommandLineRunner {
+
+    override fun run(vararg args: String?) {
+        alreadyProcessedService.updateProcessedAddressesList()
+    }
 }
 
 @Component

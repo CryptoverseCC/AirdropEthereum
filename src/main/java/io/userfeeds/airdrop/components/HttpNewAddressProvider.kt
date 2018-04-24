@@ -2,6 +2,8 @@ package io.userfeeds.airdrop.components
 
 import io.reactivex.Single
 import io.userfeeds.airdrop.collecting.AddressCollecting
+import io.userfeeds.airdrop.dto.Owner
+import io.userfeeds.airdrop.update.AlreadyProcessed
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.springframework.beans.factory.annotation.Value
@@ -14,8 +16,9 @@ import retrofit2.http.POST
 
 @Component
 class HttpNewAddressProvider(
-        @Value("\${MONITORED_ERC721}") private val asset: String
-) : AddressCollecting.NewAddressProvider {
+        @Value("\${MONITORED_ERC721}") private val asset: String,
+        @Value("\${AIRDROP_CLAIM_ID}") private val airdropClaimId: String
+) : AddressCollecting.NewAddressProvider, AlreadyProcessed.ProcessedAddressProvider {
 
     private val baseUrl = "https://api-staging.userfeeds.io/ranking/"
     private val client = OkHttpClient.Builder()
@@ -30,7 +33,7 @@ class HttpNewAddressProvider(
             .create(NewAddressProviderApi::class.java)
 
 
-    override fun getOwners(since: Long?): List<AddressCollecting.Owner> {
+    override fun getOwners(since: Long?): List<Owner> {
         return if (since != null) {
             ownersSince(since)
         } else {
@@ -56,6 +59,15 @@ class HttpNewAddressProvider(
                         ))
                 )))
     }
+
+    override fun getProcessedOwners(): List<Owner> {
+        return api.receivers(
+                NewAddressProviderApi.Request(flow = listOf(
+                        NewAddressProviderApi.Algorithm(algorithm = "experimental_airdrop_receivers", params = mapOf(
+                                "id" to airdropClaimId
+                        ))
+                ))).blockingGet().items
+    }
 }
 
 interface NewAddressProviderApi {
@@ -67,5 +79,5 @@ interface NewAddressProviderApi {
 
     data class Algorithm(val algorithm: String, val params: Map<String, Any>)
 
-    data class Response(val items: List<AddressCollecting.Owner>)
+    data class Response(val items: List<Owner>)
 }

@@ -1,7 +1,9 @@
 package io.userfeeds.airdrop.components
 
 import io.userfeeds.airdrop.collecting.AddressCollecting
+import io.userfeeds.airdrop.dto.Owner
 import io.userfeeds.airdrop.processing.AddressProcessing
+import io.userfeeds.airdrop.update.AlreadyProcessed
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Component
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component
 class MongoDB(
         private val mongoOwnerRepository: MongoOwnerRepository,
         private val mongoTimeRepository: MongoTimeRepository
-) : AddressCollecting.AddressStore, AddressProcessing.MongoDB {
+) : AddressCollecting.AddressStore, AlreadyProcessed.AddressStore, AddressProcessing.MongoDB {
 
     override fun saveTime(timestamp: Long) {
         val id = mongoTimeRepository.findAll().firstOrNull()?.id
@@ -21,7 +23,11 @@ class MongoDB(
         return mongoTimeRepository.findAll().firstOrNull()?.timestamp
     }
 
-    override fun saveOwners(owners: List<AddressCollecting.Owner>, processed: Boolean) {
+    override fun saveProcessedOwners(owners: List<Owner>) {
+        saveOwners(owners, true)
+    }
+
+    override fun saveOwners(owners: List<Owner>, processed: Boolean) {
         val oldOwners = mongoOwnerRepository.findAllById(owners.map { it.address }).toSet()
         val mongoOwners = owners.map { MongoOwner(address = it.address, processed = processed) }
         if (processed) {

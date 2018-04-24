@@ -3,6 +3,7 @@ package io.userfeeds.airdrop
 import com.nhaarman.mockito_kotlin.*
 import io.userfeeds.airdrop.collecting.AddressCollecting
 import io.userfeeds.airdrop.collecting.AddressCollectingService
+import io.userfeeds.airdrop.dto.Owner
 import org.junit.Test
 import java.util.*
 
@@ -37,10 +38,10 @@ class AddressCollectingServiceTest {
         verify(mongo, never()).saveOwners(any(), any())
     }
 
-    private fun setup(newOwnersFromNeo: List<AddressCollecting.Owner>, mongoLastTimeStamp: Long?) {
+    private fun setup(newOwnersFromNeo: List<Owner>, mongoLastTimeStamp: Long?) {
         whenever(mongo.getTime()).thenReturn(mongoLastTimeStamp)
-        whenever(neo.getOwners(any())).thenReturn(newOwnersFromNeo)
+        whenever(neo.getOwners(anyOrNull())).thenReturn(newOwnersFromNeo)
     }
 }
 
-fun newOwner(time: Long = 1L, address: String = UUID.randomUUID().toString()) = AddressCollecting.Owner(address, time)
+fun newOwner(time: Long = 1L, address: String = UUID.randomUUID().toString()) = Owner(address, time)
