@@ -15,7 +15,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 @Component
-class HttpNewAddressProvider(
+class UserfeedsApiAdapter(
         @Value("\${MONITORED_ERC721}") private val asset: String,
         @Value("\${AIRDROP_CLAIM_ID}") private val airdropClaimId: String
 ) : AddressCollecting.NewAddressProvider, AlreadyProcessed.ProcessedAddressProvider {
@@ -30,7 +30,7 @@ class HttpNewAddressProvider(
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
-            .create(NewAddressProviderApi::class.java)
+            .create(UserfeedsApi::class.java)
 
 
     override fun getOwners(since: Long?): List<Owner> {
@@ -41,20 +41,20 @@ class HttpNewAddressProvider(
         }.blockingGet().items
     }
 
-    private fun ownersSince(since: Long): Single<NewAddressProviderApi.Response> {
+    private fun ownersSince(since: Long): Single<UserfeedsApi.Response> {
         return api.receivers(
-                NewAddressProviderApi.Request(flow = listOf(
-                        NewAddressProviderApi.Algorithm(algorithm = "experimental_receivers", params = mapOf(
+                UserfeedsApi.Request(flow = listOf(
+                        UserfeedsApi.Algorithm(algorithm = "experimental_receivers", params = mapOf(
                                 "timestamp" to since,
                                 "asset" to asset
                         ))
                 )))
     }
 
-    private fun allOwners(): Single<NewAddressProviderApi.Response> {
+    private fun allOwners(): Single<UserfeedsApi.Response> {
         return api.receivers(
-                NewAddressProviderApi.Request(flow = listOf(
-                        NewAddressProviderApi.Algorithm(algorithm = "experimental_all_receivers", params = mapOf(
+                UserfeedsApi.Request(flow = listOf(
+                        UserfeedsApi.Algorithm(algorithm = "experimental_all_receivers", params = mapOf(
                                 "asset" to asset
                         ))
                 )))
@@ -62,15 +62,15 @@ class HttpNewAddressProvider(
 
     override fun getProcessedOwners(): List<Owner> {
         return api.receivers(
-                NewAddressProviderApi.Request(flow = listOf(
-                        NewAddressProviderApi.Algorithm(algorithm = "experimental_airdrop_receivers", params = mapOf(
+                UserfeedsApi.Request(flow = listOf(
+                        UserfeedsApi.Algorithm(algorithm = "experimental_airdrop_receivers", params = mapOf(
                                 "id" to airdropClaimId
                         ))
                 ))).blockingGet().items
     }
 }
 
-interface NewAddressProviderApi {
+interface UserfeedsApi {
 
     @POST("./")
     fun receivers(@Body request: Request): Single<Response>
