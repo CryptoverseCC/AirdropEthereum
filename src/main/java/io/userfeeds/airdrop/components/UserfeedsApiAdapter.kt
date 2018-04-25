@@ -38,35 +38,39 @@ class UserfeedsApiAdapter(
             ownersSince(since)
         } else {
             allOwners()
-        }.blockingGet().items
+        }
     }
 
-    private fun ownersSince(since: Long): Single<UserfeedsApi.Response> {
-        return api.receivers(
-                UserfeedsApi.Request(flow = listOf(
-                        UserfeedsApi.Algorithm(algorithm = "experimental_receivers", params = mapOf(
-                                "timestamp" to since,
-                                "asset" to asset
-                        ))
-                )))
+    private fun ownersSince(since: Long): List<Owner> {
+        return newRequest(
+                algorithm = "experimental_receivers",
+                params = mapOf(
+                        "timestamp" to since,
+                        "asset" to asset
+                )
+        ).execute()
     }
 
-    private fun allOwners(): Single<UserfeedsApi.Response> {
-        return api.receivers(
-                UserfeedsApi.Request(flow = listOf(
-                        UserfeedsApi.Algorithm(algorithm = "experimental_all_receivers", params = mapOf(
-                                "asset" to asset
-                        ))
-                )))
+    private fun allOwners(): List<Owner> {
+        return newRequest(
+                algorithm = "experimental_all_receivers",
+                params = mapOf("asset" to asset)
+        ).execute()
     }
 
     override fun getProcessedOwners(): List<Owner> {
-        return api.receivers(
-                UserfeedsApi.Request(flow = listOf(
-                        UserfeedsApi.Algorithm(algorithm = "experimental_airdrop_receivers", params = mapOf(
-                                "id" to airdropClaimId
-                        ))
-                ))).blockingGet().items
+        return newRequest(
+                algorithm = "experimental_airdrop_receivers",
+                params = mapOf("id" to airdropClaimId)
+        ).execute()
+    }
+
+    private fun newRequest(algorithm: String, params: Map<String, Any>): UserfeedsApi.Request {
+        return UserfeedsApi.Request(flow = listOf(UserfeedsApi.Algorithm(algorithm = algorithm, params = params)))
+    }
+
+    private fun UserfeedsApi.Request.execute(): List<Owner> {
+        return api.receivers(this).blockingGet().items
     }
 }
 
