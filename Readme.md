@@ -1,4 +1,22 @@
-# Blockchain Workshop
+# AirdropEthereum
+
+It is an application for sending test ethereum to all owners of ERC721.
+
+To run project you have to fill config in `docker-compose.yml`
+Then you can start project using:
+```bash
+sudo docker-compose up --build 
+```
+
+For starting address processing use:
+```
+PROCESS_ADDRESSES=true
+```
+
+In case you want to make first airdrop by hand use or [our UI](https://github.com/Userfeeds/airdrop-ui)
+```
+SKIP_ADDRESSES=true
+```
 
 ## Environment
 
@@ -41,21 +59,3 @@ Setup IntelliJ and then go to `Plugins -> Browse repositories -> Intellij-Solidi
 
 Solidity contracts are in solidity directory.
 We can recompile all of them and recreate java classes with `./regenerate-solidity.sh`
-
-### Docker
-
-To run project you have to fill config in docker-compose.yml
-Than you can start project using:
-```bash
-sudo docker-compose up --build 
-```
-
-For starting address processing use:
-```
-PROCESS_ADDRESSES=true
-```
-
-In case you want to make first airdrop by hand use:
-```
-SKIP_ADDRESSES=true
-```
